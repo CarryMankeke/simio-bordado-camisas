@@ -1,0 +1,178 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1100" viewBox="0 0 1500 1100" font-family="Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="flecha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#3a3f45"/>
+    </marker>
+    <style>
+      .t { fill:#1f2328; font-size:17px; text-anchor:middle; }
+      .b { font-weight:bold; }
+      .s { fill:#3a3f45; font-size:14px; text-anchor:middle; }
+      .l { fill:#1f2328; font-size:15px; }
+      .lbl { fill:#1f2328; font-size:15px; font-weight:bold; }
+      .linea { stroke:#3a3f45; stroke-width:2; fill:none; }
+      .term { fill:#e9f5ec; stroke:#2e7d4f; stroke-width:2; }
+      .proc { fill:#eef4fb; stroke:#2f5f8f; stroke-width:2; }
+      .desv { fill:#fdecea; stroke:#b23b3b; stroke-width:2; }
+      .deci { fill:#fff8e1; stroke:#b7860b; stroke-width:2; }
+      .panel { fill:#f5f6f7; stroke:#9aa1a8; stroke-width:1.5; }
+      .maq { fill:#2f5f8f; }
+      .maqt { fill:#ffffff; font-size:14px; font-weight:bold; text-anchor:middle; }
+      .obj { fill:#2f5f8f; font-size:12px; font-style:italic; text-anchor:middle; }
+      .objd { fill:#b23b3b; font-size:12px; font-style:italic; text-anchor:middle; }
+      .objy { fill:#8a6508; font-size:12px; font-style:italic; text-anchor:middle; }
+    </style>
+  </defs>
+
+  <rect width="1500" height="1100" fill="#ffffff"/>
+
+  <!-- Título -->
+  <text x="24" y="42" style="fill:#1f2328; font-size:26px; font-weight:bold;">Lab 1 · Centro de bordado de camisas</text>
+  <text x="24" y="68" style="fill:#5a6168; font-size:15px;">Diagrama de flujo del problema · Gestión Industrial (laboratorio), USACH 2/2026</text>
+
+  <g transform="translate(0,25)">
+    <!-- 1. Inicio -->
+    <rect class="term" x="250" y="80" width="360" height="52" rx="26"/>
+    <text class="t b" x="430" y="112">Inicio de la jornada (8 h)</text>
+    <line class="linea" x1="430" y1="132" x2="430" y2="163" marker-end="url(#flecha)"/>
+
+    <!-- 2. Llegada -->
+    <polygon class="proc" points="250,165 650,165 610,245 210,245"/>
+    <text class="t b" x="430" y="198">Llega una camisa</text>
+    <text class="s" x="430" y="222">tiempo entre llegadas: Exponencial, media 60 s</text>
+    <text class="obj" x="430" y="239">Simio: Source «Llegadas»</text>
+    <line class="linea" x1="430" y1="245" x2="430" y2="268" marker-end="url(#flecha)"/>
+
+    <!-- Nota de llegadas -->
+    <rect x="16" y="168" width="176" height="74" rx="6" fill="#ffffff" stroke="#9aa1a8" stroke-dasharray="5,4"/>
+    <text x="104" y="190" style="fill:#3a3f45; font-size:13px; text-anchor:middle; font-style:italic;">Las camisas siguen</text>
+    <text x="104" y="208" style="fill:#3a3f45; font-size:13px; text-anchor:middle; font-style:italic;">llegando toda la jornada,</text>
+    <text x="104" y="226" style="fill:#3a3f45; font-size:13px; text-anchor:middle; font-style:italic;">aunque el almacén esté lleno</text>
+    <line x1="192" y1="205" x2="228" y2="205" stroke="#9aa1a8" stroke-width="1.5" stroke-dasharray="5,4"/>
+
+    <!-- 3. Decisión: cola -->
+    <polygon class="deci" points="430,270 610,345 430,420 250,345"/>
+    <text class="t b" x="430" y="333">¿Hay espacio en el</text>
+    <text class="t b" x="430" y="355">almacenamiento temporal?</text>
+    <text class="s" x="430" y="375">(menos de 10 camisas)</text>
+    <text class="objy" x="430" y="393">Simio: TransferNode</text>
+
+    <!-- Rama No: desvío -->
+    <line class="linea" x1="610" y1="345" x2="698" y2="345" marker-end="url(#flecha)"/>
+    <text class="lbl" x="640" y="334">No</text>
+    <rect class="desv" x="700" y="310" width="300" height="70" rx="8"/>
+    <text class="t b" x="850" y="340">Se envía a otro centro</text>
+    <text class="s" x="850" y="360">(se subcontrata: venta perdida)</text>
+    <text class="objd" x="850" y="375">Simio: Sink «OtroCentro»</text>
+    <line class="linea" x1="850" y1="380" x2="850" y2="428" marker-end="url(#flecha)"/>
+    <rect class="term" x="700" y="430" width="300" height="50" rx="25"/>
+    <text class="t b" x="850" y="461">Sale del sistema</text>
+
+    <!-- Rama Sí: cola -->
+    <line class="linea" x1="430" y1="420" x2="430" y2="458" marker-end="url(#flecha)"/>
+    <text class="lbl" x="444" y="446">Sí</text>
+    <rect class="proc" x="230" y="460" width="400" height="70" rx="8"/>
+    <text class="t b" x="430" y="484">Almacenamiento temporal</text>
+    <text class="s" x="430" y="504">capacidad 10 camisas (compartido) · tiempo de proceso 0</text>
+    <text class="obj" x="430" y="522">Simio: Server «AlmacenTemporal»</text>
+    <line class="linea" x1="430" y1="530" x2="430" y2="558" marker-end="url(#flecha)"/>
+
+    <!-- 4. Decisión: máquina libre -->
+    <polygon class="deci" points="430,560 610,630 430,700 250,630"/>
+    <text class="t b" x="430" y="625">¿Hay una máquina</text>
+    <text class="t b" x="430" y="647">de bordar libre?</text>
+
+    <!-- Rama No: sigue esperando -->
+    <polyline class="linea" points="250,630 170,630 170,495 228,495" marker-end="url(#flecha)"/>
+    <text class="lbl" x="196" y="620">No</text>
+    <text x="158" y="563" transform="rotate(-90 158 563)" style="fill:#3a3f45; font-size:13px; text-anchor:middle; font-style:italic;">sigue en el almacén</text>
+
+    <!-- Rama Sí: bordado en paralelo (una máquina por camisa) -->
+    <line class="linea" x1="430" y1="700" x2="430" y2="716"/>
+    <text class="lbl" x="444" y="714">Sí</text>
+    <line class="linea" x1="275" y1="716" x2="585" y2="716"/>
+    <line class="linea" x1="275" y1="716" x2="275" y2="736" marker-end="url(#flecha)"/>
+    <line class="linea" x1="430" y1="716" x2="430" y2="736" marker-end="url(#flecha)"/>
+    <line class="linea" x1="585" y1="716" x2="585" y2="736" marker-end="url(#flecha)"/>
+    <rect class="proc" x="205" y="738" width="140" height="100" rx="8"/>
+    <text class="t b" x="275" y="762">Bordado 1</text>
+    <text class="s" x="275" y="782">capacidad 1</text>
+    <text class="s" x="275" y="800">Normal(150 s; 4 s)</text>
+    <text class="obj" x="275" y="822">Simio: Server</text>
+    <rect class="proc" x="360" y="738" width="140" height="100" rx="8" stroke-dasharray="7,4"/>
+    <text class="t b" x="430" y="762">Bordado 2</text>
+    <text class="s" x="430" y="782">capacidad 1</text>
+    <text class="s" x="430" y="800">Normal(150 s; 4 s)</text>
+    <text class="obj" x="430" y="822">Simio: Server</text>
+    <rect class="proc" x="515" y="738" width="140" height="100" rx="8" stroke-dasharray="7,4"/>
+    <text class="t b" x="585" y="762">Bordado 3</text>
+    <text class="s" x="585" y="782">capacidad 1</text>
+    <text class="s" x="585" y="800">Normal(150 s; 4 s)</text>
+    <text class="obj" x="585" y="822">Simio: Server</text>
+    <line class="linea" x1="275" y1="838" x2="275" y2="852"/>
+    <line class="linea" x1="430" y1="838" x2="430" y2="852"/>
+    <line class="linea" x1="585" y1="838" x2="585" y2="852"/>
+    <line class="linea" x1="275" y1="852" x2="585" y2="852"/>
+    <line x1="655" y1="788" x2="688" y2="788" stroke="#9aa1a8" stroke-width="1.5" stroke-dasharray="5,4"/>
+
+    <!-- 5. Despacho -->
+    <line class="linea" x1="430" y1="852" x2="430" y2="866" marker-end="url(#flecha)"/>
+    <rect class="term" x="250" y="868" width="360" height="62" rx="8"/>
+    <text class="t b" x="430" y="891">Despacho</text>
+    <text class="s" x="430" y="909">(cuenta como camisa despachada)</text>
+    <text class="obj" x="430" y="924">Simio: Sink «Despacho»</text>
+    <line class="linea" x1="430" y1="930" x2="430" y2="953" marker-end="url(#flecha)"/>
+    <rect class="term" x="250" y="955" width="360" height="50" rx="25"/>
+    <text class="t b" x="430" y="986">Sale del sistema</text>
+
+    <!-- Panel de escenarios -->
+    <rect class="panel" x="690" y="640" width="330" height="270" rx="10"/>
+    <text x="855" y="668" style="fill:#1f2328; font-size:16px; font-weight:bold; text-anchor:middle;">Escenarios a comparar</text>
+    <text x="855" y="688" style="fill:#5a6168; font-size:13px; text-anchor:middle;">máquinas de bordar en paralelo (propiedad Maquinas)</text>
+    <text x="855" y="705" style="fill:#5a6168; font-size:13px; text-anchor:middle;">borde punteado: se habilita según el escenario</text>
+
+    <text class="l b" x="706" y="732">Escenario 1</text>
+    <text x="706" y="750" style="fill:#5a6168; font-size:13px;">1 máquina</text>
+    <rect class="maq" x="840" y="712" width="50" height="38" rx="6"/><text class="maqt" x="865" y="736">M1</text>
+
+    <text class="l b" x="706" y="802">Escenario 2</text>
+    <text x="706" y="820" style="fill:#5a6168; font-size:13px;">2 máquinas</text>
+    <rect class="maq" x="840" y="782" width="50" height="38" rx="6"/><text class="maqt" x="865" y="806">M1</text>
+    <rect class="maq" x="900" y="782" width="50" height="38" rx="6"/><text class="maqt" x="925" y="806">M2</text>
+
+    <text class="l b" x="706" y="872">Escenario 3</text>
+    <text x="706" y="890" style="fill:#5a6168; font-size:13px;">3 máquinas</text>
+    <rect class="maq" x="840" y="852" width="50" height="38" rx="6"/><text class="maqt" x="865" y="876">M1</text>
+    <rect class="maq" x="900" y="852" width="50" height="38" rx="6"/><text class="maqt" x="925" y="876">M2</text>
+    <rect class="maq" x="960" y="852" width="50" height="38" rx="6"/><text class="maqt" x="985" y="876">M3</text>
+
+    <!-- Panel: cómo se simula -->
+    <rect class="panel" x="1080" y="80" width="390" height="372" rx="10"/>
+    <text x="1100" y="114" style="fill:#1f2328; font-size:18px; font-weight:bold;">Cómo se simula</text>
+    <text class="l" x="1100" y="146">• Cada corrida dura una jornada de 8 h</text>
+    <text class="l" x="1100" y="170">• 10 réplicas por escenario</text>
+    <text class="l" x="1100" y="194">• 3 escenarios: 1, 2 y 3 máquinas</text>
+    <text class="l" x="1100" y="218">• Connectors: el traslado es instantáneo</text>
+    <text class="l" x="1100" y="242">• Planta a escala: 1 cuadro = 1 m</text>
+    <text x="1100" y="282" style="fill:#1f2328; font-size:18px; font-weight:bold;">Indicadores que se miden</text>
+    <text class="l" x="1100" y="312">• Camisas despachadas</text>
+    <text class="l" x="1100" y="336">• Camisas enviadas a otro centro</text>
+    <text class="l" x="1100" y="360">• Utilización de cada máquina (%)</text>
+    <text class="l" x="1100" y="384">• Espera promedio y WIP en el almacén</text>
+    <text x="1100" y="420" style="fill:#5a6168; font-size:13px;">Se comparan los promedios de las 10 réplicas.</text>
+
+    <!-- Simbología -->
+    <rect class="panel" x="1080" y="480" width="390" height="250" rx="10"/>
+    <text x="1100" y="512" style="fill:#1f2328; font-size:18px; font-weight:bold;">Simbología</text>
+    <rect class="term" x="1100" y="532" width="70" height="28" rx="14"/>
+    <text class="l" x="1190" y="552">Inicio o salida (Sink)</text>
+    <polygon class="proc" points="1108,575 1172,575 1162,603 1098,603"/>
+    <text class="l" x="1190" y="595">Llegada (Source)</text>
+    <rect class="proc" x="1100" y="618" width="70" height="28" rx="4"/>
+    <text class="l" x="1190" y="638">Proceso o almacén (Server)</text>
+    <polygon class="deci" points="1135,656 1170,672 1135,688 1100,672"/>
+    <text class="l" x="1190" y="678">Decisión (TransferNode)</text>
+    <text x="1100" y="714" style="fill:#5a6168; font-size:13px;">En cursiva: el objeto de Simio que lo modela.</text>
+  </g>
+
+  <text x="1476" y="1080" style="fill:#8a9097; font-size:12px; text-anchor:end;">Datos del enunciado del Lab 1 · modelo en Simio · v4, 10 nov 2026 (con el feedback del ayudante)</text>
+</svg>
